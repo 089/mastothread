@@ -321,7 +321,7 @@ $(document).ready(function() {
                     client_name: 'Mastothread',
                     redirect_uris: window.location.origin + window.location.pathname,
                     scopes: 'write:statuses',
-                    website: 'https://github.com/rstockm/mastothread'
+                    website: 'https://github.com/089/mastothread'
                 })
             });
 
