@@ -34,6 +34,29 @@
                 <button id="applyLimit" class="btn btn-primary btn-copy-style">Apply</button>
             </div>
 
+            <!-- Mastodon Integration Section -->
+            <div class="mastodon-section mt-4">
+                <h4>Mastodon Integration</h4>
+                <div class="form-group">
+                    <label for="mastodonServer">Mastodon Server:</label>
+                    <input type="text" id="mastodonServer" class="form-control" placeholder="https://mastodon.social" value="https://mastodon.social">
+                </div>
+                <div class="mastodon-auth mb-3">
+                    <button id="mastodonLogin" class="btn btn-success">Login to Mastodon</button>
+                    <button id="mastodonLogout" class="btn btn-secondary" style="display: none;">Logout</button>
+                    <span id="mastodonStatus" class="ml-2 text-muted">Not logged in</span>
+                </div>
+                <div class="mastodon-posting" style="display: none;">
+                    <button id="postThread" class="btn btn-primary btn-lg">Post Thread to Mastodon</button>
+                    <div id="postingProgress" class="mt-2" style="display: none;">
+                        <div class="progress">
+                            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small id="progressText" class="text-muted">Posting thread...</small>
+                    </div>
+                </div>
+            </div>
+
             <!-- Advice section -->
 
             <ol>
@@ -41,7 +64,7 @@
                 <li>Adjust the character limit or disable pagination if needed.</li>
                 <li>Insert "===" for a manual split.</li>
                 <li>View the real-time preview on the right. Use the "Copy" button to copy individual posts.</li>
-                <li>Paste the posts into your Mastodon app of choice.</li>
+                <li>Login to your Mastodon account and use "Post Thread" to automatically post all parts, or paste manually into your Mastodon app.</li>
                 <li>Enjoy your Mastodon threads with ease!</li>
             </ol>
         </div>

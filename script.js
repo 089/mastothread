@@ -267,6 +267,264 @@ $(document).ready(function() {
         // Add the copied-post class to the parent post-container to change its background
         $(this).closest('.post-container').addClass('copied-post');
     });
+
+    // Mastodon Integration
+    let mastodonConfig = {
+        server: '',
+        clientId: '',
+        clientSecret: '',
+        accessToken: '',
+        isLoggedIn: false
+    };
+
+    // Load saved config from localStorage
+    function loadMastodonConfig() {
+        const saved = localStorage.getItem('mastodonConfig');
+        if (saved) {
+            mastodonConfig = { ...mastodonConfig, ...JSON.parse(saved) };
+            if (mastodonConfig.accessToken) {
+                mastodonConfig.isLoggedIn = true;
+                updateMastodonUI();
+            }
+        }
+    }
+
+    // Save config to localStorage
+    function saveMastodonConfig() {
+        localStorage.setItem('mastodonConfig', JSON.stringify(mastodonConfig));
+    }
+
+    // Update UI based on login status
+    function updateMastodonUI() {
+        if (mastodonConfig.isLoggedIn) {
+            $('#mastodonLogin').hide();
+            $('#mastodonLogout').show();
+            $('#mastodonStatus').text('Logged in to ' + mastodonConfig.server).addClass('logged-in');
+            $('.mastodon-posting').show();
+        } else {
+            $('#mastodonLogin').show();
+            $('#mastodonLogout').hide();
+            $('#mastodonStatus').text('Not logged in').removeClass('logged-in');
+            $('.mastodon-posting').hide();
+        }
+    }
+
+    // Register app with Mastodon instance
+    async function registerMastodonApp(server) {
+        try {
+            const response = await fetch(`${server}/api/v1/apps`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    client_name: 'Mastothread',
+                    redirect_uris: window.location.origin + window.location.pathname,
+                    scopes: 'write:statuses',
+                    website: 'https://github.com/rstockm/mastothread'
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return {
+                clientId: data.client_id,
+                clientSecret: data.client_secret
+            };
+        } catch (error) {
+            console.error('Error registering app:', error);
+            throw error;
+        }
+    }
+
+    // Start OAuth flow
+    async function startMastodonLogin() {
+        const server = $('#mastodonServer').val().trim();
+        if (!server) {
+            alert('Please enter a Mastodon server URL');
+            return;
+        }
+
+        // Normalize server URL
+        const normalizedServer = server.startsWith('http') ? server : 'https://' + server;
+        
+        try {
+            $('#mastodonStatus').text('Registering app...').removeClass('error');
+            
+            const { clientId, clientSecret } = await registerMastodonApp(normalizedServer);
+            
+            mastodonConfig.server = normalizedServer;
+            mastodonConfig.clientId = clientId;
+            mastodonConfig.clientSecret = clientSecret;
+            saveMastodonConfig();
+
+            // Redirect to authorization
+            const authUrl = new URL(`${normalizedServer}/oauth/authorize`);
+            authUrl.searchParams.append('client_id', clientId);
+            authUrl.searchParams.append('scope', 'write:statuses');
+            authUrl.searchParams.append('redirect_uri', window.location.origin + window.location.pathname);
+            authUrl.searchParams.append('response_type', 'code');
+
+            window.location.href = authUrl.toString();
+        } catch (error) {
+            console.error('Login error:', error);
+            $('#mastodonStatus').text('Login failed: ' + error.message).addClass('error');
+        }
+    }
+
+    // Handle OAuth callback
+    async function handleOAuthCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code && mastodonConfig.clientId) {
+            try {
+                $('#mastodonStatus').text('Getting access token...');
+                
+                const response = await fetch(`${mastodonConfig.server}/oauth/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        client_id: mastodonConfig.clientId,
+                        client_secret: mastodonConfig.clientSecret,
+                        redirect_uri: window.location.origin + window.location.pathname,
+                        grant_type: 'authorization_code',
+                        code: code,
+                        scope: 'write:statuses'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                mastodonConfig.accessToken = data.access_token;
+                mastodonConfig.isLoggedIn = true;
+                saveMastodonConfig();
+                updateMastodonUI();
+
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } catch (error) {
+                console.error('Token exchange error:', error);
+                $('#mastodonStatus').text('Authentication failed: ' + error.message).addClass('error');
+            }
+        }
+    }
+
+    // Post a status to Mastodon
+    async function postMastodonStatus(content, replyToId = null) {
+        try {
+            const response = await fetch(`${mastodonConfig.server}/api/v1/statuses`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${mastodonConfig.accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    status: content,
+                    in_reply_to_id: replyToId,
+                    visibility: 'public'
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error posting status:', error);
+            throw error;
+        }
+    }
+
+    // Post entire thread
+    async function postMastodonThread() {
+        const text = $('#inputText').val();
+        const chunks = splitText(text);
+        
+        if (chunks.length === 0) {
+            alert('No content to post');
+            return;
+        }
+
+        const paginationEnabled = $('#paginationCheckbox').prop('checked');
+        const totalPosts = chunks.length;
+
+        $('#postThread').prop('disabled', true);
+        $('#postingProgress').show();
+        $('#progressBar').css('width', '0%');
+        $('#progressText').text('Starting thread...');
+
+        try {
+            let replyToId = null;
+            
+            for (let i = 0; i < chunks.length; i++) {
+                let content = chunks[i];
+                
+                // Add pagination if enabled
+                if (paginationEnabled) {
+                    content += `\n${i + 1}/${totalPosts}`;
+                }
+
+                $('#progressText').text(`Posting ${i + 1}/${totalPosts}...`);
+                
+                const post = await postMastodonStatus(content, replyToId);
+                replyToId = post.id;
+
+                // Update progress
+                const progress = ((i + 1) / totalPosts) * 100;
+                $('#progressBar').css('width', progress + '%');
+
+                // Add a small delay to avoid rate limiting
+                if (i < chunks.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+
+            $('#progressText').text('Thread posted successfully!');
+            setTimeout(() => {
+                $('#postingProgress').hide();
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error posting thread:', error);
+            $('#progressText').text('Error: ' + error.message).css('color', 'red');
+            alert('Failed to post thread: ' + error.message);
+        } finally {
+            $('#postThread').prop('disabled', false);
+        }
+    }
+
+    // Logout from Mastodon
+    function mastodonLogout() {
+        mastodonConfig = {
+            server: '',
+            clientId: '',
+            clientSecret: '',
+            accessToken: '',
+            isLoggedIn: false
+        };
+        localStorage.removeItem('mastodonConfig');
+        updateMastodonUI();
+    }
+
+    // Event handlers for Mastodon functionality
+    $('#mastodonLogin').on('click', startMastodonLogin);
+    $('#mastodonLogout').on('click', mastodonLogout);
+    $('#postThread').on('click', postMastodonThread);
+
+    // Initialize Mastodon functionality
+    loadMastodonConfig();
+    handleOAuthCallback();
     
     
 
