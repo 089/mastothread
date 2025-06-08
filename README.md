@@ -1,10 +1,9 @@
 # Mastothread
 
 An intuitive web tool to seamlessly split and format long texts into manageable chunks for Mastodon threads.
-Try it here: https://rstockm.github.io/mastothread/
+Try it here: https://089.github.io/mastothread/
 
-<img width="600" alt="Screenshot of Mastothread" src="https://github.com/rstockm/mastothread/assets/3195116/6dbf2a7d-55de-4afa-b3a8-12fa9627a3cf">
-
+<img width="600" alt="Screenshot of Mastothread" src="https://github.com/user-attachments/assets/f05b0627-5f8f-4f74-b2e4-f13591047056">
 
 
 ## Features
@@ -15,6 +14,7 @@ Try it here: https://rstockm.github.io/mastothread/
 - **Adjustable Character Limit**: Customize the chunk size as per your preference.
 - **Real-time Preview**: Visualize how your text will appear as separate Mastodon posts.
 - **Copy to Clipboard**: Quick copy buttons for every chunk, which turn green upon being clicked to indicate a successful copy action.
+- **Post to Mastodon**: Login to Mastodon and post all your chunks automatically.
 - **Dynamic Subtitles**: Catchy, rotating subtitles to make your Mastothread experience memorable.
 
 ## Technology Stack
@@ -26,12 +26,13 @@ Try it here: https://rstockm.github.io/mastothread/
 ## Usage
 
 1. Navigate to the Mastothread web page.
-2. In the "Write your Text" section, input your lengthy text.
-3. Adjust the character limit or disable pagination if needed.
-4. Insert "===" for a manual split.
-5. View the real-time preview on the right. Use the "Copy" button to copy individual posts.
-6. Paste the posts into your Mastodon app of choice.
-7. Enjoy your Mastodon threads with ease!
+2. Login to your Mastodon account.
+3. In the "Write your Text" section, input your lengthy text.
+4. Adjust the character limit or disable pagination if needed.
+5. Insert "===" for a manual split.
+6. View the real-time preview on the right. Use the "Copy" button to copy individual posts.
+7. Paste the posts into your Mastodon app of choice manually or use "Post Thread to Mastodon" to automatically post all parts.
+8. Enjoy your Mastodon threads with ease!
 
 ## AI-Guided Development: A Proof of Concept
 

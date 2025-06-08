@@ -24,6 +24,29 @@
 
     <div class="row">
         <div class="col-md-6">
+            <!-- Mastodon Connection Section -->
+            <h3>Connect to your Mastodon server</h3>
+            <div class="mastodon-section">
+                <div class="form-group">
+                    <label for="mastodonServer">Mastodon Server:</label>
+                    <input type="text" id="mastodonServer" class="form-control" placeholder="https://mastodon.social" value="https://mastodon.social">
+                </div>
+                <div class="mastodon-auth mb-3">
+                    <button id="mastodonLogin" class="btn btn-success">Login to Mastodon</button>
+                    <button id="mastodonLogout" class="btn btn-secondary" style="display: none;">Logout</button>
+                    <span id="mastodonStatus" class="ml-2 text-muted">Not logged in</span>
+                </div>
+                <div class="mastodon-posting" style="display: none;">
+                    <button id="postThread" class="btn btn-primary btn-lg">Post Thread to Mastodon</button>
+                    <div id="postingProgress" class="mt-2" style="display: none;">
+                        <div class="progress">
+                            <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small id="progressText" class="text-muted">Posting thread...</small>
+                    </div>
+                </div>
+            </div>
+
             <h3>Write Your Text</h3>
             <textarea id="inputText" class="form-control" rows="10">a thread: 🧵</textarea>
             <div class="settings mt-3 d-flex justify-content-between">
@@ -37,11 +60,12 @@
             <!-- Advice section -->
 
             <ol>
+                <li>Login to your Mastodon account.</li>
                 <li>In the "Write your Text" section, input your lengthy text.</li>
                 <li>Adjust the character limit or disable pagination if needed.</li>
                 <li>Insert "===" for a manual split.</li>
                 <li>View the real-time preview on the right. Use the "Copy" button to copy individual posts.</li>
-                <li>Paste the posts into your Mastodon app of choice.</li>
+                <li>Paste the posts into your Mastodon app of choice manually or use "Post Thread to Mastodon" to automatically post all parts.</li>
                 <li>Enjoy your Mastodon threads with ease!</li>
             </ol>
         </div>
@@ -58,8 +82,8 @@
 
 <footer class="footer text-center py-4 mt-5">
     <div class="container">
-        <span class="text-muted">Written by ChatGPT4 - Prompted by Ralf Stockmann. Host your own Mastothread - check </span>
-        <a href="https://github.com/rstockm/mastothread" target="_blank">GitHub</a>
+        <span class="text-muted">Written by ChatGPT4 - Prompted by Ralf Stockmann. Expanded by Claude Sonnet 4 Thinking - Prompted by 089. Host your own Mastothread - check </span>
+        <a href="https://github.com/089/mastothread" target="_blank">GitHub</a>
     </div>
 </footer>
 

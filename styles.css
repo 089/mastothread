@@ -107,3 +107,100 @@ ol {  /* Assuming your headlines are h2 elements */
 .copied-post .alert {
   background-color: #e6ffe6; /* This is a very light green tint */
 }
+
+/* Mastodon Integration Styles */
+.mastodon-section {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.mastodon-auth {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#mastodonServer {
+  max-width: 300px;
+}
+
+@media (max-width: 768px) {
+  .mastodon-section {
+    padding: 15px;
+  }
+
+  .mastodon-auth {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+
+  #mastodonServer {
+    max-width: none;
+    width: 100%;
+  }
+
+  .mastodon-auth button {
+    width: 100%;
+  }
+
+  #postThread {
+    width: 100%;
+  }
+}
+
+#mastodonLogin {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+#mastodonLogin:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+#postThread {
+  background-color: #6f42c1;
+  border-color: #6f42c1;
+  font-weight: bold;
+}
+
+#postThread:hover {
+  background-color: #5a2d91;
+  border-color: #533085;
+}
+
+#postThread:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.mastodon-posting {
+  margin-top: 15px;
+}
+
+#postingProgress .progress {
+  height: 20px;
+  margin-bottom: 5px;
+}
+
+#postingProgress .progress-bar {
+  background-color: #6f42c1;
+  transition: width 0.3s ease;
+}
+
+#mastodonStatus {
+  font-weight: 500;
+}
+
+#mastodonStatus.logged-in {
+  color: #28a745 !important;
+}
+
+#mastodonStatus.error {
+  color: #dc3545 !important;
+}
