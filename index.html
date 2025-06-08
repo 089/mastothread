@@ -24,19 +24,9 @@
 
     <div class="row">
         <div class="col-md-6">
-            <h3>Write Your Text</h3>
-            <textarea id="inputText" class="form-control" rows="10">a thread: 🧵</textarea>
-            <div class="settings mt-3 d-flex justify-content-between">
-                <div>
-                    Limit: <input type="number" id="charLimit" value="500" min="1">
-                    Pagination: <input type="checkbox" id="paginationCheckbox" checked>
-                </div>
-                <button id="applyLimit" class="btn btn-primary btn-copy-style">Apply</button>
-            </div>
-
-            <!-- Mastodon Integration Section -->
-            <div class="mastodon-section mt-4">
-                <h4>Mastodon Integration</h4>
+            <!-- Mastodon Connection Section -->
+            <h3>Connect to your Mastodon server</h3>
+            <div class="mastodon-section">
                 <div class="form-group">
                     <label for="mastodonServer">Mastodon Server:</label>
                     <input type="text" id="mastodonServer" class="form-control" placeholder="https://mastodon.social" value="https://mastodon.social">
@@ -57,14 +47,25 @@
                 </div>
             </div>
 
+            <h3>Write Your Text</h3>
+            <textarea id="inputText" class="form-control" rows="10">a thread: 🧵</textarea>
+            <div class="settings mt-3 d-flex justify-content-between">
+                <div>
+                    Limit: <input type="number" id="charLimit" value="500" min="1">
+                    Pagination: <input type="checkbox" id="paginationCheckbox" checked>
+                </div>
+                <button id="applyLimit" class="btn btn-primary btn-copy-style">Apply</button>
+            </div>
+
             <!-- Advice section -->
 
             <ol>
+                <li>Login to your Mastodon account.</li>
                 <li>In the "Write your Text" section, input your lengthy text.</li>
                 <li>Adjust the character limit or disable pagination if needed.</li>
                 <li>Insert "===" for a manual split.</li>
                 <li>View the real-time preview on the right. Use the "Copy" button to copy individual posts.</li>
-                <li>Login to your Mastodon account and use "Post Thread" to automatically post all parts, or paste manually into your Mastodon app.</li>
+                <li>Paste the posts into your Mastodon app of choice manually or use "Post Thread to Mastodon" to automatically post all parts.</li>
                 <li>Enjoy your Mastodon threads with ease!</li>
             </ol>
         </div>
